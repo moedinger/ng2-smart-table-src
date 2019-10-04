@@ -10,27 +10,12 @@ import { DataSource } from '../../lib/data-source/data-source';
     <nav *ngIf="shouldShow()" class="ng2-smart-pagination-nav">
       <ul class="ng2-smart-pagination pagination">
         <li class="ng2-smart-page-item page-item" [ngClass]="{disabled: getPage() == 1}">
-          <a class="ng2-smart-page-link page-link" href="#"
-          (click)="getPage() == 1 ? false : paginate(1)" aria-label="First">
-            <span aria-hidden="true">&laquo;</span>
-            <span class="sr-only">First</span>
-          </a>
-        </li>
-        <li class="ng2-smart-page-item page-item" [ngClass]="{disabled: getPage() == 1}">
           <a class="ng2-smart-page-link page-link page-link-prev" href="#"
              (click)="getPage() == 1 ? false : prev()" aria-label="Prev">
             <span aria-hidden="true">&lt;</span>
             <span class="sr-only">Prev</span>
           </a>
         </li>
-        <li class="ng2-smart-page-item page-item"
-        [ngClass]="{active: getPage() == page}" *ngFor="let page of getPages()">
-          <span class="ng2-smart-page-link page-link"
-          *ngIf="getPage() == page">{{ page }} <span class="sr-only">(current)</span></span>
-          <a class="ng2-smart-page-link page-link" href="#"
-          (click)="paginate(page)" *ngIf="getPage() != page">{{ page }}</a>
-        </li>
-
         <li class="ng2-smart-page-item page-item"
             [ngClass]="{disabled: getPage() == getLast()}">
           <a class="ng2-smart-page-link page-link page-link-next" href="#"
@@ -39,16 +24,15 @@ import { DataSource } from '../../lib/data-source/data-source';
             <span class="sr-only">Next</span>
           </a>
         </li>
-        
-        <li class="ng2-smart-page-item page-item"
-        [ngClass]="{disabled: getPage() == getLast()}">
-          <a class="ng2-smart-page-link page-link" href="#"
-          (click)="getPage() == getLast() ? false : paginate(getLast())" aria-label="Last">
-            <span aria-hidden="true">&raquo;</span>
-            <span class="sr-only">Last</span>
-          </a>
-        </li>
       </ul>
+      <div class="overview">
+        <div class="counter">
+        &emsp;
+        <span>{{ getPageStart() }}</span> &nbsp;-&nbsp;
+        <span>{{ getPageEnd() }}</span> &nbsp;of&nbsp;
+        <span>{{ count }}</span>
+       </div>
+      </div>
     </nav>
     
     <nav *ngIf="perPageSelect && perPageSelect.length > 0" class="ng2-smart-pagination-per-page">
@@ -143,13 +127,24 @@ export class PagerComponent implements OnChanges {
     return Math.ceil(this.count / this.perPage);
   }
 
+  getPageStart(): number {
+    return (this.page - 1) * this.perPage + 1;
+  }
+
+  getPageEnd(): number {
+    if (this.page * this.perPage >= this.count) {
+      return this.count;
+    }
+    return this.page * this.perPage;
+  }
+
   isPageOutOfBounce(): boolean {
     return (this.page * this.perPage) >= (this.count + this.perPage) && this.page > 1;
   }
 
   initPages() {
     const pagesCount = this.getLast();
-    let showPagesCount = 4;
+    let showPagesCount = 1;
     showPagesCount = pagesCount < showPagesCount ? pagesCount : showPagesCount;
     this.pages = [];
 
