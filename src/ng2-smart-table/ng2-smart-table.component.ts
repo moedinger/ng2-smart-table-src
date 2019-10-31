@@ -26,7 +26,6 @@ export class Ng2SmartTableComponent implements OnChanges {
   @Output() editConfirm = new EventEmitter<any>();
   @Output() createConfirm = new EventEmitter<any>();
   @Output() rowHover: EventEmitter<any> = new EventEmitter<any>();
-  @Output() sFilter = new EventEmitter<any>();
 
   tableClass: string;
   tableId: string;
@@ -181,29 +180,30 @@ export class Ng2SmartTableComponent implements OnChanges {
   sort($event: any) {
     this.sortItem = $event;
     for (let key of Array.from(this.filterItems.keys())) {
-      if (!!this.sortItem) {
-        if (key !== this.sortItem.control.column.id) {
-          this.filterItems.get(key).control.resetFilter();
-        }
+      if (this.sortItem && key !== this.sortItem.control.column.id) {
+        this.filterItems.get(key).control.resetFilter();
+        this.filterItems.delete(key);
       }
     }
     this.resetAllSelector();
   }
 
   filter($event: any) {
-    if (!!$event.search && !!this.sortItem && $event.field !== this.sortItem.control.column.id) {
+    if ($event.search && this.sortItem && $event.field !== this.sortItem.control.column.id) {
       this.source.resetSort();
     }
-    this.filterItems.set($event.field, $event);
+    if ($event.field && $event.field!=="") {
+      this.filterItems.set($event.field, $event);
+    }
     for (let key of Array.from(this.filterItems.keys())) {
-      if (!!$event.search && key !== $event.field) {
+      if ($event.search && key !== $event.field) {
         if (this.filterItems.get(key) && this.filterItems.get(key).control) {
           this.filterItems.get(key).control.resetFilter();
+          this.filterItems.delete(key);
         }
       }
     }
     this.resetAllSelector();
-    this.sFilter.emit($event);
   }
 
   private resetAllSelector() {
