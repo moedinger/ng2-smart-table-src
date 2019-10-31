@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
 import { FormControl } from '@angular/forms';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/operator/debounceTime';
@@ -19,6 +20,7 @@ import { DefaultFilter } from './default-filter';
 })
 export class InputFilterComponent extends DefaultFilter implements OnInit {
 
+  @Output() sFormControl = new EventEmitter<any>();
   inputControl = new FormControl();
 
   constructor() {
@@ -31,5 +33,10 @@ export class InputFilterComponent extends DefaultFilter implements OnInit {
       .distinctUntilChanged()
       .debounceTime(this.delay)
       .subscribe((value: string) => this.setFilter());
+    this.sFormControl.emit({ control: this });
+  }
+
+  resetFilter() {
+    this.inputControl.reset();
   }
 }

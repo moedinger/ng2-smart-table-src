@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 import { DataSource } from '../../lib/data-source/data-source';
 import { Column } from '../../lib/data-set/column';
@@ -19,7 +20,8 @@ import { Subscription } from 'rxjs/Subscription';
                        [query]="query"
                        [ngClass]="inputClass"
                        [column]="column"
-                       (filter)="onFilter($event)">
+                       (filter)="onFilter($event)"
+                       (sFormControl)="onSFormControl($event)">
       </checkbox-filter>
       <completer-filter *ngSwitchCase="'completer'"
                         [query]="query"
@@ -31,7 +33,8 @@ import { Subscription } from 'rxjs/Subscription';
                     [query]="query"
                     [ngClass]="inputClass"
                     [column]="column"
-                    (filter)="onFilter($event)">
+                    (filter)="onFilter($event)"
+                    (sFormControl)="onSFormControl($event)">
       </input-filter>
     </div>
   `,
@@ -45,6 +48,7 @@ export class FilterComponent implements OnChanges {
   @Output() filter = new EventEmitter<any>();
 
   query: string = '';
+  formControl: any;
 
   protected dataChangedSub: Subscription;
 
@@ -71,7 +75,17 @@ export class FilterComponent implements OnChanges {
     }
   }
 
+  onSFormControl($event: any) {
+    this.formControl = $event.control;
+  }
+
   onFilter(query: string) {
+    this.filter.emit({
+      search: query,
+      field: this.column.id,
+      control: this.formControl,
+    });
+
     this.source.addFilter({
       field: this.column.id,
       search: query,
