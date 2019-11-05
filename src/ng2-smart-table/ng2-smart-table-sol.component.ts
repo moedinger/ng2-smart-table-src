@@ -7,11 +7,11 @@ import { deepExtend } from './lib/helpers';
 import { LocalDataSource } from './lib/data-source/local/local.data-source';
 
 @Component({
-  selector: 'ng2-smart-table',
-  styleUrls: ['./ng2-smart-table.component.scss'],
-  templateUrl: './ng2-smart-table.component.html',
+  selector: 'ng2-smart-table-sol',
+  styleUrls: ['./ng2-smart-table-sol.component.scss'],
+  templateUrl: './ng2-smart-table-sol.component.html',
 })
-export class Ng2SmartTableComponent implements OnChanges {
+export class Ng2SmartTableSolComponent implements OnChanges {
 
   @Input() source: any;
   @Input() settings: Object = {};
@@ -85,6 +85,8 @@ export class Ng2SmartTableComponent implements OnChanges {
   };
 
   isAllSelected: boolean = false;
+  filterItems = new Map();
+  sortItem: any;
 
   ngOnChanges(changes: { [propertyName: string]: SimpleChange }) {
     if (this.grid) {
@@ -176,10 +178,31 @@ export class Ng2SmartTableComponent implements OnChanges {
   }
 
   sort($event: any) {
+    this.sortItem = $event;
+    for (let key of Array.from(this.filterItems.keys())) {
+      if (this.sortItem && key !== this.sortItem.control.column.id) {
+        this.filterItems.get(key).control.resetFilter();
+        this.filterItems.delete(key);
+      }
+    }
     this.resetAllSelector();
   }
 
   filter($event: any) {
+    if ($event.search && this.sortItem && $event.field !== this.sortItem.control.column.id) {
+      this.source.resetSort();
+    }
+    if ($event.field && $event.field!=="") {
+      this.filterItems.set($event.field, $event);
+    }
+    for (let key of Array.from(this.filterItems.keys())) {
+      if ($event.search && key !== $event.field) {
+        if (this.filterItems.get(key) && this.filterItems.get(key).control) {
+          this.filterItems.get(key).control.resetFilter();
+          this.filterItems.delete(key);
+        }
+      }
+    }
     this.resetAllSelector();
   }
 
