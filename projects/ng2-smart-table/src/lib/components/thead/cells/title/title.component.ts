@@ -57,7 +57,14 @@ export class TitleComponent implements OnChanges {
         compare: this.column.getCompareFunction(),
       },
     ]);
-    this.sort.emit(null);
+    this.sort.emit({control: this});
+
+  }
+
+  setSortDirection(direction: string): void {
+    this.column.sortDirection=direction;
+    this.currentDirection=this.column.sortDirection;
+    this.sort.emit({control: this});
   }
 
   changeSortDirection(): string {

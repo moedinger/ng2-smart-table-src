@@ -5,4 +5,5 @@ export { DefaultFilter, Filter } from './lib/components/filter/filter-types/defa
 export { Cell } from './lib/lib/data-set/cell';
 export { LocalDataSource } from './lib/lib/data-source/local/local.data-source';
 export { ServerDataSource } from './lib/lib/data-source/server/server.data-source';
+export { ServerSourceConf } from './lib/lib/data-source/server/server-source.conf';
 export * from './lib/ng2-smart-table.component';

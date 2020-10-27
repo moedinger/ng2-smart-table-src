@@ -49,9 +49,7 @@ export class ServerDataSource extends LocalDataSource {
     if (data instanceof Array) {
       return data;
     }
-
-    throw new Error(`Data must be an array.
-    Please check that data extracted from the server response by the key '${this.conf.dataKey}' exists and is array.`);
+    return []
   }
 
   /**
@@ -70,8 +68,51 @@ export class ServerDataSource extends LocalDataSource {
   }
 
   protected requestElements(): Observable<any> {
-    let httpParams = this.createRequesParams();
-    return this.http.get(this.conf.endPoint, { params: httpParams, observe: 'response' });
+    if (this.isRequestValid()) {
+      let httpParams = this.createRequesParams();
+      return this.http.get(this.conf.endPoint, { params: httpParams, observe: 'response' });
+    }
+    return null;
+  }
+
+  /*
+  the request is valid when:
+  (a) only one filter item available
+  (b) only one sort item available
+  (c) when both filter item and sort item available they must be associated with the same key
+  */
+  isRequestValid(): boolean {
+    let filterField = '';
+    let filterCounter = 0;
+
+    if (this.filterConf.filters) {
+      this.filterConf.filters.forEach((fieldConf: any) => {
+        if (fieldConf['search']) {
+          filterField = fieldConf['field'];
+          filterCounter += 1
+          if (filterCounter > 1) {
+            return false;
+          }
+        }
+      });
+    }
+
+    let sortKey = '';
+    let sortCounter = 0;
+    if (this.sortConf) {
+      this.sortConf.forEach((fieldConf) => {
+        sortKey = fieldConf.field;
+        sortCounter += 1
+        if (sortCounter > 1) {
+          return false;
+        }
+      });
+
+      if (filterCounter == 1 && sortCounter == 1 && filterField !== sortKey) {
+        return false;
+      }
+    }
+    return true;
   }
 
   protected createRequesParams(): HttpParams {

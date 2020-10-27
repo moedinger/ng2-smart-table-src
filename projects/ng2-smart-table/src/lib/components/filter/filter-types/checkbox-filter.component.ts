@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { DefaultFilter } from './default-filter';
@@ -16,6 +16,7 @@ export class CheckboxFilterComponent extends DefaultFilter implements OnInit {
 
   filterActive: boolean = false;
   inputControl = new FormControl();
+  @Output() sFormControl = new EventEmitter<any>();
 
   constructor() {
     super();
@@ -31,10 +32,13 @@ export class CheckboxFilterComponent extends DefaultFilter implements OnInit {
         this.query = checked ? trueVal : falseVal;
         this.setFilter();
       });
+    this.sFormControl.emit({ control: this });
   }
 
   resetFilter(event: any) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
     this.query = '';
     this.inputControl.setValue(false, { emitEvent: false });
     this.filterActive = false;

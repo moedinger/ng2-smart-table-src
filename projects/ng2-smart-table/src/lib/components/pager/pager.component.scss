@@ -1,3 +1,16 @@
+.overview {
+  float: right;
+  display: table;
+  height: 30px;
+  width: auto;
+  font-size: .875em;
+ }
+
+.overview .counter {
+  display: table-cell;
+  vertical-align: middle;
+ }
+
 .ng2-smart-pagination {
   display: inline-flex;
   font-size: .875em;

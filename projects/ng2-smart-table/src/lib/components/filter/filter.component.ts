@@ -1,6 +1,8 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, Input, Output, EventEmitter } from '@angular/core';
 import { FilterDefault } from './filter-default';
 import { Subscription } from 'rxjs';
+import { DataSource } from '../../lib/data-source/data-source';
+import { Column } from '../../lib/data-set/column';
 
 @Component({
   selector: 'ng2-smart-table-filter',
@@ -25,7 +27,12 @@ import { Subscription } from 'rxjs';
     `,
 })
 export class FilterComponent extends FilterDefault implements OnChanges {
+  @Input() column: Column;
+  @Input() source: DataSource;
+  @Input() inputClass: string = '';
+  @Output() filter = new EventEmitter<any>();
   query: string = '';
+
   protected dataChangedSub: Subscription;
 
   ngOnChanges(changes: SimpleChanges) {
@@ -49,5 +56,15 @@ export class FilterComponent extends FilterDefault implements OnChanges {
         }
       });
     }
+  }
+
+  onFilter($event: any) {
+    this.filter.emit($event);
+
+    this.source.addFilter({
+      field: this.column.id,
+      search: $event.search,
+      filter: this.column.getFilterFunction(),
+    });
   }
 }

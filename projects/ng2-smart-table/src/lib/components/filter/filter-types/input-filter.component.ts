@@ -1,6 +1,6 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, skip } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { DefaultFilter } from './default-filter';
 
@@ -17,6 +17,7 @@ import { DefaultFilter } from './default-filter';
 })
 export class InputFilterComponent extends DefaultFilter implements OnInit, OnChanges {
 
+  @Output() sFormControl = new EventEmitter<any>();
   inputControl = new FormControl();
 
   constructor() {
@@ -36,11 +37,16 @@ export class InputFilterComponent extends DefaultFilter implements OnInit, OnCha
         this.query = this.inputControl.value;
         this.setFilter();
       });
+    this.sFormControl.emit({ control: this });
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.query) {
       this.inputControl.setValue(this.query);
     }
+  }
+
+  resetFilter() {
+    this.inputControl.reset();
   }
 }

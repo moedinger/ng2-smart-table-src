@@ -102,6 +102,10 @@ export class LocalDataSource extends DataSource {
     }
   }
 
+  resetSort() {
+    this.setSort([], false);
+  }
+
   empty(): Promise<any> {
     this.data = [];
 
@@ -235,7 +239,7 @@ export class LocalDataSource extends DataSource {
     if (this.filterConf.filters) {
       if (this.filterConf.andOperator) {
         this.filterConf.filters.forEach((fieldConf: any) => {
-          if (fieldConf['search'].length > 0) {
+          if (fieldConf['search'] && fieldConf['search'].length > 0) {
             data = LocalFilter
               .filter(data, fieldConf['field'], fieldConf['search'], fieldConf['filter']);
           }
@@ -243,7 +247,7 @@ export class LocalDataSource extends DataSource {
       } else {
         let mergedData: any = [];
         this.filterConf.filters.forEach((fieldConf: any) => {
-          if (fieldConf['search'].length > 0) {
+          if (fieldConf['search'] && fieldConf['search'].length > 0) {
             mergedData = mergedData.concat(LocalFilter
               .filter(data, fieldConf['field'], fieldConf['search'], fieldConf['filter']));
           }

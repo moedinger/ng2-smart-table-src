@@ -163,3 +163,10 @@ Yes!  Visit [our homepage](http://akveo.com/) or simply leave us a note to [cont
 
 Enjoy :metal:
 We're always happy to hear your feedback!
+
+
+##Solidus
+ * Following is the base commit for the "v1.7.0_solidus" branch
+   https://github.com/akveo/ng2-smart-table/commit/c1057288dbfaed3a3493b3176a2f61d823cf1673
+ * Following is the base commit for the "v1.2.2_solidus" branch
+   https://github.com/akveo/ng2-smart-table/commit/8dccdccd44751f4cafdd4f37eee6154a4e120a50

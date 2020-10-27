@@ -1,5 +1,4 @@
-import {Component, Input} from '@angular/core';
-
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {FilterDefault} from "./filter-default";
 
 @Component({
@@ -16,7 +15,8 @@ import {FilterDefault} from "./filter-default";
                        [query]="query"
                        [ngClass]="inputClass"
                        [column]="column"
-                       (filter)="onFilter($event)">
+                       (filter)="onFilter($event)"
+                       (sFormControl)="onSFormControl($event)">
       </checkbox-filter>
       <completer-filter *ngSwitchCase="'completer'"
                         [query]="query"
@@ -28,11 +28,27 @@ import {FilterDefault} from "./filter-default";
                     [query]="query"
                     [ngClass]="inputClass"
                     [column]="column"
-                    (filter)="onFilter($event)">
+                    (filter)="onFilter($event)"
+                    (sFormControl)="onSFormControl($event)">
       </input-filter>
     </ng-container>
   `,
 })
 export class DefaultFilterComponent extends FilterDefault {
   @Input() query: string;
+  @Output() filter = new EventEmitter<any>();
+
+  formControl: any;
+
+  onSFormControl($event: any) {
+    this.formControl = $event.control;
+  }
+
+  onFilter(query: string) {
+    this.filter.emit({
+      search: query,
+      field: this.column.id,
+      control: this.formControl,
+   });
+ }
 }
